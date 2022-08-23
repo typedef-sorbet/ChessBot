@@ -9,7 +9,7 @@ sqlite3.register_converter('BOOLEAN', lambda v: bool(int(v)))
 sqlite3.register_converter('boolean', lambda v: bool(int(v)))
 
 # I'm sure I'll never regret formatting the board like this.
-_BOARD_START = "Br,Bn,Bb,Bq,Bk,Bb,Bn,Br,B,B,B,B,B,B,B,B,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,W,W,W,W,W,W,W,W,Wr,Wn,Wb,Wq,Wk,Wb,Wn,Wr"
+_BOARD_START = "Br,Bn,Bb,Bq,Bk,Bb,Bn,Br,B,B,B,B,B,B,B,B,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,W,W,W,W,W,W,W,W,Wr,Wn,Wb,Wq,Wk,Wb,Wn,Wr"
 
 def get_db_conn():
     if not os.path.exists(_db_path):
@@ -44,3 +44,13 @@ def create_game(inviter_name, inviter_id, invitee_name, invitee_id, inviter_want
         return True, ""
     else:
         return False, "One or both players are already in a game. Quit/forfeit that game via !quit/!forfeit before creating a new one."
+
+def get_board(user_id):
+    conn, _ = get_db_conn()
+
+    return conn.execute("""
+        SELECT board
+        FROM Games
+        WHERE player_1_user_id = ?
+        OR player_2_user_id = ?
+    """, (user_id, user_id)).fetchall()[0][0]

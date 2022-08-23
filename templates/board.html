@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            /* put css here lol */
+            div {
+                text-align: center;
+                padding-top: 10px;
+            }
+
+            .space {
+                color: "transparent";
+            }
+
+            .white_space {
+                background-color: #EBEBD0
+            }
+
+            .black_space {
+                background-color: #779455
+            }
+
+            .highlighted_space {
+                background-color: #B9CC36
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(8, 100px);
+                grid-template-rows: repeat(8, 100px);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="root" class="grid">
+            {% for space in spaces %}
+            <div class="{{ space.class }}" id="{{ space.name }}">
+                {% if space.content %}
+                <img src="/home/sanctity/chess_bot/img/{{ space.content }}.png" height=80 width=80></img>
+                {% else %}
+                <p> </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
