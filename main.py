@@ -1,10 +1,6 @@
 import discord
-import diy as api
 import db
 import config
-
-from discord.ext import tasks, commands
-from datetime import datetime
 
 from discord.ext import tasks, commands
 from datetime import datetime
@@ -12,7 +8,7 @@ from datetime import datetime
 class ChessClient(discord.Client):
     def __init__(self):
         self.active = False
-        super().__init__()
+        super().__init__(intents=discord.Intents.all())
         
     async def on_ready(self):
         print(f"Logged on as {self.user}")
@@ -31,6 +27,24 @@ class ChessClient(discord.Client):
         # Check to see if it's a command
         match message.content.split(" "):
             # Put cases here...
+            case ["!start", *args]:
+                # TODO implement a way for the other player to accept a game invite
+                inviter_name = message.author.name
+                invitee_name = " ".join(args)
+                print(f"Got request to start a new game between {inviter_name} and {invitee_name}")
+
+                inviter_known, inviter_id = config.player_known(inviter_name)
+                invitee_known, invitee_id = config.player_known(invitee_name)
+
+                if inviter_known and invitee_known:
+                    success, reason = db.create_game(inviter_name, inviter_id, invitee_name, invitee_id)
+                    if not success:
+                        await channel.send(reason)
+                    else:
+                        # TODO send board
+                        await channel.send("Game created.")
+                else:
+                    await channel.send("One or both players unknown to the chess bot -- use !register to register yourself")
 
             case _:
                 print("No command found in message.")

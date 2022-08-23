@@ -3,3 +3,4 @@ __pycache__/
 *_env/
 cache.json
 stats.db
+*.db
