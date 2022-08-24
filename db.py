@@ -45,6 +45,27 @@ def create_game(inviter_name, inviter_id, invitee_name, invitee_id, inviter_want
     else:
         return False, "One or both players are already in a game. Quit/forfeit that game via !quit/!forfeit before creating a new one."
 
+def remove_game(user_id):
+    conn, _ = get_db_conn()
+
+    conn.begin()
+
+    try:
+        cursor = conn.execute("""
+            DELETE FROM Games
+            WHERE player_1_user_id = ?
+            OR player_2_user_id = ?;
+        """, (user_id, user_id))
+        conn.commit()
+        if cursor.rowcount < 1:
+            return False, f"There are no running games with this user."
+        else:
+            return True, "Game forfeited."
+    except Exception as e:
+        print(traceback.format_exc())
+        conn.rollback()
+        return False, f"Unable to remove game from system."
+
 def get_board(user_id):
     conn, _ = get_db_conn()
 

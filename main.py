@@ -63,6 +63,15 @@ class ChessClient(discord.Client):
                 else:
                     await channel.send("One or both players unknown to the chess bot -- use !register to register yourself")
 
+            case ["!forfeit", *args] | ["!quit", *args]:
+                user_known, user_id = config.player_known(message.author.name)
+
+                if user_known:
+                    removed, reason = db.remove_game(user_id)
+                    await channel.send(reason)
+                else:
+                    await channel.send(f"Unable to forfeit a game for an unknown user")
+
             case _:
                 print("No command found in message.")
                 pass
@@ -74,15 +83,18 @@ class ChessClient(discord.Client):
             {
                 # Prepare for the worst Python ternary you've ever seen.
                 "class": "highlighted_space" if space_name == from_space or space_name == to_space else ("white_space" if i % 2 == (i // 8) % 2 else "black_space"),
-                # "content": "<p> </p>" if space_content == "x" else f'<img src="{space_content} width=80 height=80"></img>'
                 "content": space_content,
-                "name": space_name
+                "name": space_name,
+                "number": space_name[1] if space_name[0] == "a" else "",
+                "letter": space_name[0] if space_name[1] == "1" else ""
             }
-            for i, (space_content, space_name) in enumerate(zip(board_str.split(","), map(lambda x: "".join(x), itertools.product("abcdefgh", "12345678"))))
+            for i, (space_content, space_name) in enumerate(zip(board_str.split(","), map(lambda x: "".join(reversed(x)), itertools.product("87654321", "abcdefgh"))))
         ]
 
         template = jinja_env.get_template("board.html")
         rendered_html = template.render(spaces=spaces)
+
+        print(spaces)
 
         hti = Html2Image()
 

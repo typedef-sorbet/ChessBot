@@ -7,6 +7,7 @@
             div {
                 text-align: center;
                 padding-top: 10px;
+                position: relative
             }
 
             .space {
@@ -14,15 +15,36 @@
             }
 
             .white_space {
-                background-color: #EBEBD0
+                background-color: #EBEBD0;
+                color: #779455;
             }
 
             .black_space {
-                background-color: #779455
+                background-color: #779455;
+                color: #EBEBD0;
             }
 
             .highlighted_space {
-                background-color: #B9CC36
+                background-color: #B9CC36;
+                color: #EBEBD0;
+            }
+
+            .number_label {
+                position: absolute;
+                left: 5px;
+                top: -12px;
+                font-weight: 600;
+                font-family: -apple-system,BlinkMacSystemFont,Segoe UI,system-ui,Helvetica,Arial,sans-serif;
+                font-size: 1.1rem;
+            }
+
+            .letter_label {
+                position: absolute;
+                left: 82px;
+                top: 60px;
+                font-weight: 600;
+                font-family: -apple-system,BlinkMacSystemFont,Segoe UI,system-ui,Helvetica,Arial,sans-serif;
+                font-size: 1.1rem;
             }
 
             .grid {
@@ -38,9 +60,21 @@
             {% for space in spaces %}
             <div class="{{ space.class }}" id="{{ space.name }}">
                 {% if space.content %}
-                <img src="/home/sanctity/chess_bot/img/{{ space.content }}.png" height=80 width=80></img>
+                    <img src="/home/sanctity/chess_bot/img/{{ space.content }}.png" height=80 width=80></img>
                 {% else %}
-                <p> </p>
+                    <p> </p>
+                {% endif %}
+
+                {% if space.number or space.letter %}
+                    {% if space.number %}
+                        <p class="number_label">{{ space.number }}</p>
+                    {% endif %}
+
+                    {% if space.letter %}
+                        <p class="letter_label">{{ space.letter }}</p>
+                    {% endif %}
+                {% else %}
+                    <p> </p>
                 {% endif %}
             </div>
             {% endfor %}
